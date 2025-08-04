@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+
 ﻿// WPF + Emgu.CV + Newtonsoft.Json
 
 =======
@@ -9,7 +9,6 @@ using Emgu.CV.Structure;
 using Emgu.CV.Util;
 using Microsoft.VisualBasic;  
 using Newtonsoft.Json;
->>>>>>> aaf8317ad038444b84024b5d6db0e75331acf3ce
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -151,9 +150,7 @@ namespace FaceRecognition
                 }
                 else
                 {
-<<<<<<< HEAD
-                    Dispatcher.Invoke(() =>
-=======
+
                     
                     _timer.Stop();
                     _capture.Pause();
@@ -161,7 +158,6 @@ namespace FaceRecognition
                     var hasAppointment = MessageBox.Show("Do you have an appointment?", "Appointment Check", MessageBoxButton.YesNo);
 
                     if (hasAppointment == MessageBoxResult.No)
->>>>>>> aaf8317ad038444b84024b5d6db0e75331acf3ce
                     {
                         StatusLabel.Content = "Waiting for face...";
                     });
@@ -173,7 +169,6 @@ namespace FaceRecognition
             }
         }
 
-<<<<<<< HEAD
         private async void StartButton_Click(object sender, RoutedEventArgs e)
         {
             if (_isWaitingForStart)
@@ -188,7 +183,7 @@ namespace FaceRecognition
 
         private async Task RunUserFlow()
         {
-            // Grab current frame and detect face
+            
             Mat frame = new();
             _capture.Retrieve(frame);
             var img = frame.ToImage<Bgr, byte>();
@@ -204,24 +199,24 @@ namespace FaceRecognition
 
             var faceRect = faces[0];
 
-            // Validate eyes open and mouth closed and basic lighting
+          
             if (!ValidateFaceParameters(img, faceRect))
             {
                 MessageBox.Show("Face parameters not valid. Please adjust your face, open your eyes and close your mouth.");
                 return;
             }
 
-            // Ask appointment question
+           
             var answer = MessageBox.Show("Do you have an appointment?", "Appointment", MessageBoxButton.YesNoCancel);
             if (answer == MessageBoxResult.Yes)
             {
-                // Get name
+             
                 string name = Microsoft.VisualBasic.Interaction.InputBox("Enter your name:", "Name");
                 if (string.IsNullOrWhiteSpace(name))
                 {
                     MessageBox.Show("Name cannot be empty.");
                     return;
-=======
+
                         bool nameFound = _appointments.Any(a => a.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
                         if (!nameFound)
                         {
@@ -247,20 +242,19 @@ namespace FaceRecognition
                     
                     _capture.Start();
                     _timer.Start();
->>>>>>> aaf8317ad038444b84024b5d6db0e75331acf3ce
                 }
 
-                // Check if name in appointments
+               
                 if (!_appointments.ContainsKey(name))
                 {
                     MessageBox.Show("No appointment found for this name.");
                     return;
                 }
 
-                // Capture photo (passport size, white background)
+                // Capture photo
                 var passportImg = CapturePassportPhoto(img, faceRect);
 
-                // Save captured photo temporarily to compare
+                // Save captured photo
                 var tempPath = Path.Combine("Temp", "capture.jpg");
                 Directory.CreateDirectory("Temp");
                 passportImg.Save(tempPath);
@@ -271,7 +265,7 @@ namespace FaceRecognition
                 {
                     MessageBox.Show("No saved image found for this name. Saving current photo as reference.");
                     passportImg.Save(savedPath);
-                    LoadKnownFaces(); // reload faces
+                    LoadKnownFaces(); 
                     MessageBox.Show("Reference photo saved. Access granted.");
                     return;
                 }
@@ -289,11 +283,11 @@ namespace FaceRecognition
             }
             else if (answer == MessageBoxResult.No)
             {
-                // Visitor flow
+               
                 var reason = MessageBox.Show("Are you here to make an appointment?\nYes = Make Appointment\nNo = Just Visiting", "Visitor", MessageBoxButton.YesNoCancel);
                 if (reason == MessageBoxResult.Yes)
                 {
-                    // Make appointment
+                   
                     string newName = Microsoft.VisualBasic.Interaction.InputBox("Enter your name to make an appointment:", "Make Appointment");
                     if (string.IsNullOrWhiteSpace(newName))
                     {
@@ -316,7 +310,7 @@ namespace FaceRecognition
 
         private Image<Bgr, byte> CapturePassportPhoto(Image<Bgr, byte> img, System.Drawing.Rectangle faceRect)
         {
-            // Expand rect to include forehead etc
+            
             var cropRect = new System.Drawing.Rectangle(
                 Math.Max(faceRect.X - faceRect.Width / 2, 0),
                 Math.Max(faceRect.Y - faceRect.Height / 2, 0),
@@ -326,10 +320,10 @@ namespace FaceRecognition
 
             var faceImg = img.Copy(cropRect);
 
-            // Create white background image
+          
             var whiteBg = new Image<Bgr, byte>(cropRect.Width, cropRect.Height, new Bgr(255, 255, 255));
 
-            // Overlay face on white background (basic background removal)
+            
             CvInvoke.Resize(faceImg, faceImg, whiteBg.Size);
             faceImg.CopyTo(whiteBg);
 
@@ -346,7 +340,7 @@ namespace FaceRecognition
             bool eyesOpen = eyes.Length >= 1;
             bool mouthClosed = mouths.Length == 0;
 
-            // Additional lighting check (simple brightness average)
+            
             var brightness = faceImgGray.GetAverage().Intensity;
             bool goodLighting = brightness > 50; // tweak threshold
 
@@ -360,11 +354,11 @@ namespace FaceRecognition
                 var savedImgGray = new Image<Gray, byte>(savedImagePath).Resize(100, 100, Emgu.CV.CvEnum.Inter.Cubic);
                 var liveImgGray = liveImg.Convert<Gray, byte>().Resize(100, 100, Emgu.CV.CvEnum.Inter.Cubic);
 
-                // Simple pixel difference method
+           
                 var diff = liveImgGray.AbsDiff(savedImgGray);
                 double diffSum = CvInvoke.Sum(diff).V0;
 
-                double threshold = 1000000; // tune this threshold
+                double threshold = 1000000;
 
                 return diffSum < threshold;
             }
@@ -395,7 +389,7 @@ namespace FaceRecognition
             }
             finally
             {
-                NativeMethods.DeleteObject(hBitmap); // Clean up native resource
+                NativeMethods.DeleteObject(hBitmap); 
             }
         }
 
