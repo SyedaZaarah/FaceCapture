@@ -1,7 +1,7 @@
 
 ﻿// WPF + Emgu.CV + Newtonsoft.Json
 
-=======
+
 ﻿using Emgu.CV;
 using Emgu.CV.CvEnum;
 using Emgu.CV.Face;
